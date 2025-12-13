@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-part 'word.g.dart'; // Генеруватиметься build_runner
+part 'word.g.dart';
 
 @HiveType(typeId: 0)
 class Word extends HiveObject {
@@ -11,30 +11,29 @@ class Word extends HiveObject {
   String ukrainian;
 
   @HiveField(2)
-  int difficulty; // 1-5, як добре пам'ятаєш
+  int difficulty; // 1–5
 
   @HiveField(3)
   DateTime nextReview;
 
   @HiveField(4)
-  bool isKnown; // чи вивчене
+  bool isKnown;
 
   Word({
     required this.english,
     required this.ukrainian,
     this.difficulty = 3,
-    required this.nextReview,
+    DateTime? nextReview,
     this.isKnown = false,
-  });
+  }) : nextReview = nextReview ?? DateTime.now();
 
-  void updateDifficulty(int newDifficulty) {
-    difficulty = newDifficulty;
-    if (newDifficulty == 5) {
+  void rate(int rating) {
+    difficulty = rating;
+    if (rating >= 4) {
       isKnown = true;
     } else {
-      // Інтервальний розклад: 1 день, 3 дні, 7 днів, 14 днів, 30 днів
-      int days = [1, 3, 7, 14, 30][difficulty - 1];
-      nextReview = DateTime.now().add(Duration(days: days));
+      const days = [1, 2, 4, 7, 14];
+      nextReview = DateTime.now().add(Duration(days: days[rating - 1]));
     }
     save();
   }

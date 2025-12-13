@@ -1,57 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../models/word.dart';
 
 class WordProvider extends ChangeNotifier {
-  late Box<Word> _wordsBox;
-  List<Word> _words = [];
-  int _currentIndex = 0;
+  late Box<Word> box;
+  List<Word> todayWords = [];
 
   WordProvider() {
-    _wordsBox = Hive.box<Word>('words');
-    _loadWords();
+    box = Hive.box<Word>('words');
+    loadTodayWords();
   }
 
-  List<Word> get words => _words;
-  Word? get currentWord => _currentIndex < _words.length ? _words[_currentIndex] : null;
-  int get currentIndex => _currentIndex;
-  int get totalWords => _words.length;
-
-  void _loadWords() {
-    _words = _wordsBox.values.where((w) => !w.isKnown).where((w) => w.nextReview.isBefore(DateTime.now())).toList();
-    if (_words.isEmpty) {
-      _initSampleWords();
-    }
+  void loadTodayWords() {
+    todayWords = box.values
+        .where((w) => !w.isKnown)
+        .where((w) => w.nextReview.isBefore(DateTime.now()))
+        .toList();
     notifyListeners();
   }
 
-  void _initSampleWords() {
-    List<Word> samples = [
-      Word(english: 'Hello', ukrainian: 'Привіт', nextReview: DateTime.now()),
-      Word(english: 'World', ukrainian: 'Світ', nextReview: DateTime.now()),
-      // Додай ще 8 слів тут, наприклад:
-      // Word(english: 'Apple', ukrainian: 'Яблуко', nextReview: DateTime.now()),
-    ];
-    for (var word in samples) {
-      _wordsBox.put(word.key, word);
+  Word? get currentWord => todayWords.isEmpty ? null : todayWords.first;
+
+  void rateCurrent(int rating) {
+    if (currentWord != null) {
+      currentWord!.rate(rating);
+      todayWords.removeAt(0);
+      notifyListeners();
     }
-    _loadWords();
   }
 
-  void nextWord() {
-    if (_currentIndex < _words.length - 1) {
-      _currentIndex++;
-    } else {
-      _currentIndex = 0;
-    }
-    notifyListeners();
-  }
+  double get progress =>
+      box.isEmpty ? 0.0 : (box.values.where((w) => w.isKnown).length / box.length) * 100;
 
-  void updateCurrentWord(int difficulty) {
-    currentWord?.updateDifficulty(difficulty);
-    nextWord();
-    notifyListeners();
-  }
-
-  int get progress => (_words.length - _words.where((w) => w.isKnown).length) / _words.length * 100;
+  int get totalWords => box.length;
+  int get studiedToday => box.values.where((w) => w.isKnown).length;
 }
