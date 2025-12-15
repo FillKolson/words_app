@@ -52,18 +52,23 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () => setState(() => _isFront = !_isFront),
                     child: AnimatedSwitcher(
                       duration: const Duration(milliseconds: 600),
-                      transitionBuilder: (child, animation) => RotationYTransition(
-                        turns: animation,
-                        child: child,
-                      ),
+                      transitionBuilder: (child, animation) =>
+                          RotationYTransition(turns: animation, child: child),
                       child: _isFront
                           ? _card(word.english, Colors.deepPurple[100]!)
-                          : _card(word.ukrainian, Colors.green[100]!, key: const ValueKey('back')),
+                          : _card(
+                              word.ukrainian,
+                              Colors.green[100]!,
+                              key: const ValueKey('back'),
+                            ),
                     ),
                   ),
 
                   const SizedBox(height: 60),
-                  const Text('Як добре пам’ятаєш?', style: TextStyle(fontSize: 20)),
+                  const Text(
+                    'Як добре пам’ятаєш?',
+                    style: TextStyle(fontSize: 20),
+                  ),
                   const SizedBox(height: 20),
 
                   Row(
@@ -79,7 +84,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           provider.rateCurrent(r);
                           setState(() => _isFront = true);
                         },
-                        child: Text('$r', style: const TextStyle(fontSize: 26, color: Colors.white)),
+                        child: Text(
+                          '$r',
+                          style: const TextStyle(
+                            fontSize: 26,
+                            color: Colors.white,
+                          ),
+                        ),
                       );
                     }).toList(),
                   ),
@@ -121,10 +132,10 @@ class _HomeScreenState extends State<HomeScreen> {
 // Остаточний helper для 3D-перевороту (без deprecated і без дзеркала)
 class RotationYTransition extends AnimatedWidget {
   const RotationYTransition({
-    Key? key,
+    super.key, // ← вот так! автоматически передаёт key в super
     required Animation<double> turns,
     required this.child,
-  }) : super(key: key, listenable: turns);
+  }) : super(listenable: turns);
 
   final Widget child;
 
@@ -140,7 +151,7 @@ class RotationYTransition extends AnimatedWidget {
         ..setEntry(3, 2, 0.001) // перспектива
         ..rotateY(turnsValue * 3.14159)
         ..scaleByDouble(isBackSide ? -1.0 : 1.0, 1.0, 1.0, 1.0),
-        child: child,
+      child: child,
     );
   }
 }
