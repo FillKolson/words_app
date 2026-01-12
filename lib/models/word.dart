@@ -35,6 +35,9 @@ class Word extends HiveObject {
       const days = [1, 2, 4, 7, 14];
       nextReview = DateTime.now().add(Duration(days: days[rating - 1]));
     }
-    save();
+    // Only save if this object is in a box
+    if (key != null) {
+      save();
+    }
   }
 }
