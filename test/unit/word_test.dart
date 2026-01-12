@@ -16,11 +16,11 @@ void main() {
 
     /// Вимога 1: Функція rate() повинна коректно встановлювати статус isKnown
     /// та розраховувати наступну дату перегляду залежно від рейтингу
-    /// 
+    ///
     /// Вхідні дані:
     /// - Word з initial difficulty 1, isKnown = false
     /// - Рейтинги: 1 (слабо), 2 (нормально), 3 (добре), 4+ (відлично)
-    /// 
+    ///
     /// Очікувані результати:
     /// - При rating >= 4: isKnown = true, слово більше не потребує перегляду
     /// - При rating < 4: isKnown = false, nextReview розраховується як:
@@ -43,7 +43,10 @@ void main() {
 
         expect(testWord.isKnown, isFalse);
         expect(testWord.nextReview.isAfter(beforeRate), isTrue);
-        expect(testWord.nextReview.isBefore(afterRate.add(Duration(days: 2))), isTrue);
+        expect(
+          testWord.nextReview.isBefore(afterRate.add(Duration(days: 2))),
+          isTrue,
+        );
       });
 
       test('rate(2) should schedule 2 days review', () {
@@ -52,7 +55,10 @@ void main() {
         final afterRate = DateTime.now();
 
         expect(testWord.isKnown, isFalse);
-        expect(testWord.nextReview.isAfter(beforeRate.add(Duration(days: 1))), isTrue);
+        expect(
+          testWord.nextReview.isAfter(beforeRate.add(Duration(days: 1))),
+          isTrue,
+        );
       });
 
       test('rate(3) should schedule 4 days review', () {
@@ -61,7 +67,10 @@ void main() {
         final afterRate = DateTime.now();
 
         expect(testWord.isKnown, isFalse);
-        expect(testWord.nextReview.isAfter(beforeRate.add(Duration(days: 3))), isTrue);
+        expect(
+          testWord.nextReview.isAfter(beforeRate.add(Duration(days: 3))),
+          isTrue,
+        );
       });
     });
   });
