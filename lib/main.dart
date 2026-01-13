@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'screens/auth_screen.dart';
 import 'providers/word_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(); // розкоментуєш, коли підключиш Firebase
+  await Hive.initFlutter();
+  // Register adapters here if you have custom Hive models
+  // await Hive.openBox('words_box'); // open your boxes here
   runApp(const MyApp());
 }
 
@@ -22,7 +25,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           colorSchemeSeed: Colors.deepPurple,
         ),
-        home: const AuthScreen(), // стартовий екран
+        home: const AuthScreen(),
         routes: {'/auth': (_) => const AuthScreen()},
       ),
     );
