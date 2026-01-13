@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'screens/auth_screen.dart';
+import 'providers/word_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,11 +14,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'LinguaFlash',
-      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.deepPurple),
-      home: const AuthScreen(), // стартовий екран
-      routes: {'/auth': (_) => const AuthScreen()},
+    return MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => WordProvider())],
+      child: MaterialApp(
+        title: 'LinguaFlash',
+        theme: ThemeData(
+          useMaterial3: true,
+          colorSchemeSeed: Colors.deepPurple,
+        ),
+        home: const AuthScreen(), // стартовий екран
+        routes: {'/auth': (_) => const AuthScreen()},
+      ),
     );
   }
 }

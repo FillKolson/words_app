@@ -93,23 +93,50 @@ words_app/
 
 ### Unit Tests (test/unit/)
 
-**1 Core Model Tested: Word**
+**5 нетривіальних функцій покриті тестами:**
 
-- **Word.rate(int rating)** - Spaced repetition scheduling
-  - Tests rating-based isKnown assignment (rating 4-5 → isKnown true)
-  - Verifies nextReview date calculation for each rating (1→1d, 2→2d, 3→4d)
-  - Covers all rating levels 1-5
-  - Validates state transitions
+#### Функція 1: `Word.rate(int rating)` - Система інтервального повторення
+- **Призначення**: Оцінює рівень знання слова та планує наступну дату повторення
+- **Вхідні дані**: rating (1-5)
+- **Очікувані результати**:
+  - rating >= 4 → isKnown = true (слово вивчене)
+  - rating < 4 → nextReview = now + [1,2,4,7,14][rating-1] днів
+- **Тести**: 5 тест-кейсів (1.1-1.5)
 
-**Test Cases**: 6 tests verifying Word behavior
-- rate(4) sets isKnown to true
-- rate(5) sets isKnown to true
-- rate(1) schedules 1 day review and keeps isKnown false
-- rate(2) schedules 2 days review
-- rate(3) schedules 4 days review
-- Proper state management for all ratings
+#### Функція 2: `Word Constructor` - Ініціалізація об'єкта Word
+- **Призначення**: Створення нового об'єкта Word з параметрами
+- **Вхідні дані**: english, ukrainian (обов'язкові); difficulty, nextReview, isKnown (опціональні)
+- **Очікувані результати**:
+  - Значення за замовчуванням: difficulty=3, isKnown=false
+  - nextReview = DateTime.now() якщо не вказано
+- **Тести**: 5 тест-кейсів (2.1-2.5)
 
-**Coverage**: Word model class - full coverage of rate() method
+#### Функція 3: `TaskType enum` - Типи завдань для вивчення
+- **Призначення**: Enum визначає доступні типи завдань (flipCard, multipleChoice, typing)
+- **Очікувані результати**:
+  - Рівно 3 типи завдань
+  - Унікальні індекси (0, 1, 2)
+- **Тести**: 5 тест-кейсів (3.1-3.5)
+
+#### Функція 4: `Word properties` - Властивості та мутабельність
+- **Призначення**: Перевірка коректності зберігання та модифікації властивостей
+- **Очікувані результати**:
+  - Всі властивості мутабельні
+  - Зміна однієї властивості не впливає на інші
+  - Коректна робота з Unicode (кирилиця)
+- **Тести**: 5 тест-кейсів (4.1-4.5)
+
+#### Функція 5: `ratingFromCorrectness(bool isCorrect)` - Конвертація результату
+- **Призначення**: Перетворює булевий результат відповіді в числову оцінку
+- **Вхідні дані**: isCorrect (bool)
+- **Очікувані результати**:
+  - true → 4 (слово вивчене)
+  - false → 2 (повторити через 2 дні)
+- **Тести**: 5 тест-кейсів (5.1-5.5)
+
+**Загалом**: 25 тест-кейсів для 5 функцій
+
+**Coverage**: Word model class, TaskType enum - повне покриття основної логіки
 
 ## Running Tests
 
@@ -137,21 +164,35 @@ open coverage/html/index.html
 
 ## Project Requirements Met
 
-### Part 2: Test Automation - Option 1 (Unit Tests)
+### Part 2: Test Automation - Забезпечення якості ПЗ
 
-✅ **Repository Structure**
-- Clean git history with meaningful commits
-- .gitignore with Flutter-specific patterns
-- Comprehensive README with project structure and testing documentation
+✅ **Репозиторій**
+- Чиста історія git з осмисленими комітами
+- .gitignore з Flutter-специфічними патернами
+- README.md з описом структури проєкту та тестування
 
-✅ **Unit Tests - Word Model (1 Non-Trivial Function)**
-- Word.rate() - Core spaced repetition logic
-- 6 test cases verifying:
-  - Rating-based state transitions (isKnown assignment)
-  - Correct nextReview scheduling for each rating (1→1d, 2→2d, 3→4d, 4+→mastered)
-  - Edge cases for different ratings
-- Code coverage available via `flutter test --coverage`
-- Test documentation describes requirements and expected behavior in comments
+✅ **5 нетривіальних функцій з Unit-тестами**
+
+| Функція | Призначення | Кількість тестів |
+|---------|-------------|------------------|
+| `Word.rate()` | Інтервальне повторення | 5 |
+| `Word Constructor` | Ініціалізація об'єкта | 5 |
+| `TaskType enum` | Типи завдань | 5 |
+| `Word properties` | Мутабельність властивостей | 5 |
+| `ratingFromCorrectness()` | Конвертація відповіді в оцінку | 5 |
+
+✅ **Формат вимог у тестах**
+- Кожна група тестів містить документацію:
+  - Призначення функції
+  - Вхідні дані
+  - Очікувані результати
+  - Граничні умови
+
+✅ **Test Code Coverage**
+- Команда: `flutter test --coverage`
+- Звіт: `genhtml coverage/lcov.info -o coverage/html`
+
+✅ **Тест-фреймворк**: flutter_test (вбудований у Flutter SDK)
 
 ## Development Workflow
 
